@@ -4,6 +4,8 @@
 > **voz/audio con IA** desde una sola interfaz. Sin módulo de imágenes como
 > función independiente: el sistema se centra en **vídeo + voz**.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/joelsanchezworks-es/video-loteria-las-arenas&project-name=open-generative-ai&repository-name=open-generative-ai)
+
 Construido sobre **Next.js 15** con el modelo **BYOK** ("Bring Your Own Key"):
 la app no incluye ninguna clave; cada usuario pone la suya de
 [MuAPI](https://muapi.ai) y paga su propio consumo.
@@ -108,6 +110,26 @@ de MuAPI.)
 
 ---
 
+## 🔬 Probar la integración con tu key (sin desplegar)
+
+Hay un smoke-test que ejecuta **los mismos endpoints/slugs/payloads que usa la
+app** directamente contra `api.muapi.ai`, para validar tu key y que _genera de
+verdad_. Tu key se lee de una variable de entorno en tu máquina — **no se
+escribe en el código ni se comparte**:
+
+```bash
+# Solo saldo + voz (rápido y barato)
+MUAPI_KEY=tu_key_de_produccion node scripts/muapi-smoke.mjs
+
+# Además un vídeo corto 9:16 (más lento y consume algo más de saldo)
+MUAPI_KEY=tu_key_de_produccion node scripts/muapi-smoke.mjs --video
+```
+
+Salida esperada: `✓ Saldo`, `✓ Audio: https://…`, y con `--video`, `✓ Vídeo: https://…`.
+Si algo falla, el script imprime el endpoint y el error exactos.
+
+---
+
 ## 📡 Endpoints de MuAPI que usa la app
 
 Base: `https://api.muapi.ai/api/v1` · Autenticación: header `x-api-key` ·
@@ -144,15 +166,23 @@ ampliar: MuAPI ofrece 100+ modelos de vídeo).
 
 ## 📦 Despliegue en Vercel
 
-Proyecto estándar de Next.js, desplegable directamente:
+Proyecto estándar de Next.js. **No hay que configurar ninguna variable de
+entorno** (modelo BYOK: cada usuario pone su key desde el navegador).
+
+**Un clic (recomendado):**
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/joelsanchezworks-es/video-loteria-las-arenas&project-name=open-generative-ai&repository-name=open-generative-ai)
+
+**Importar tu propio repo:** entra en [vercel.com/new](https://vercel.com/new) →
+_Import Git Repository_ → elige `video-loteria-las-arenas` → framework **Next.js**
+(auto) → **Deploy**. En Vercel, la _Production Branch_ debe ser `main`.
+
+**Con Vercel CLI:**
 
 ```bash
 vercel          # preview
 vercel --prod   # producción
 ```
-
-No hay que configurar variables de entorno con claves de MuAPI: cada usuario
-pone la suya desde el navegador (BYOK).
 
 ---
 
