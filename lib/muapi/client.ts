@@ -12,7 +12,7 @@
  */
 
 import { MissingKeyError, MuapiError } from "./errors";
-import { getTtsModelById } from "./models";
+import { getTtsModelById, getVideoModelById } from "./models";
 import type {
   BalanceResponse,
   JobResult,
@@ -131,12 +131,17 @@ export interface GenerateVideoParams {
 }
 
 export async function generateVideo(apiKey: string, params: GenerateVideoParams): Promise<JobResult> {
+  const model = getVideoModelById(params.model);
   const payload: Json = {};
   if (params.prompt) payload.prompt = params.prompt;
   if (params.aspect_ratio) payload.aspect_ratio = params.aspect_ratio;
   if (params.duration) payload.duration = params.duration;
   if (params.resolution) payload.resolution = params.resolution;
-  if (params.image_url) payload.image_url = params.image_url;
+  if (params.image_url) {
+    // Some models take the image as a single URL, others as a one-item array.
+    if ((model?.imageField ?? "image_url") === "images_list") payload.images_list = [params.image_url];
+    else payload.image_url = params.image_url;
+  }
   return submitAndPoll(params.model, payload, apiKey, {
     onRequestId: params.onRequestId,
     maxAttempts: 900,

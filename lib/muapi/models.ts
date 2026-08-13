@@ -2,13 +2,13 @@
  * Curated MuAPI model catalog.
  *
  * Every `id` is the exact MuAPI endpoint slug (POST /api/v1/{id}). Slugs, input
- * fields and enums were taken from the open-source reference project
- * (anil-matcha/open-generative-ai) which targets the same MuAPI backend, so
- * these are real endpoints, not placeholders.
+ * fields and the per-model option enums (aspect ratio, duration, resolution,
+ * image field) were extracted directly from the open-source reference project
+ * (anil-matcha/open-generative-ai), which targets the same MuAPI backend — so
+ * the UI only offers values each model actually accepts.
  *
- * This list is intentionally a *curated* subset — MuAPI exposes 100+ video and
- * many audio models. Adding a new one is just another entry here; the UI and
- * client pick it up automatically.
+ * This is a *curated* subset — MuAPI exposes 100+ video and many audio models.
+ * Adding one is just another accurate entry here; the UI and client pick it up.
  */
 
 import type { VideoModel, TtsModel, VoiceCloneModel, LipSyncModel, SelectOption } from "./types";
@@ -75,17 +75,18 @@ export const t2vModels: VideoModel[] = [
     name: "Hailuo 02 Pro",
     provider: "MiniMax",
     mode: "t2v",
-    aspectRatios: ["16:9", "9:16"],
-    durations: [6, 10],
-    description: "MiniMax Hailuo 02 — snappy, expressive motion.",
+    // Hailuo 02 has no aspect_ratio param; fixed 6s, 1080P output.
+    durations: [6],
+    resolutions: ["1080P"],
+    description: "MiniMax Hailuo 02 — snappy, expressive motion (6s · 1080p).",
   },
   {
     id: "wan2.2-text-to-video",
     name: "Wan 2.2",
     provider: "Alibaba",
     mode: "t2v",
-    aspectRatios: ["16:9", "9:16", "1:1"],
-    durations: [5],
+    aspectRatios: ["16:9", "9:16"],
+    durations: [5, 8],
     resolutions: ["480p", "720p"],
     description: "Alibaba Wan 2.2, open-weights lineage.",
   },
@@ -94,8 +95,9 @@ export const t2vModels: VideoModel[] = [
     name: "PixVerse V5",
     provider: "PixVerse",
     mode: "t2v",
-    aspectRatios: ["16:9", "9:16", "1:1"],
+    aspectRatios: ["16:9", "9:16", "1:1", "4:3", "3:4"],
     durations: [5, 8],
+    resolutions: ["360p", "540p", "720p", "1080p"],
     description: "Stylized, social-ready clips.",
   },
   {
@@ -103,13 +105,16 @@ export const t2vModels: VideoModel[] = [
     name: "Runway Gen-3",
     provider: "Runway",
     mode: "t2v",
-    aspectRatios: ["16:9", "9:16"],
-    durations: [5, 10],
+    aspectRatios: ["16:9", "9:16", "1:1", "4:3", "3:4"],
+    durations: [5, 8],
+    resolutions: ["720p", "1080p"],
     description: "Runway Gen-3 Alpha.",
   },
 ];
 
 /* ── Image → Video ──────────────────────────────────────────────────────── */
+// Note: many i2v models have NO aspect_ratio (the aspect is taken from the
+// input image). `imageField` is the exact field MuAPI expects for the image.
 
 export const i2vModels: VideoModel[] = [
   {
@@ -118,7 +123,6 @@ export const i2vModels: VideoModel[] = [
     provider: "ByteDance",
     mode: "i2v",
     imageField: "image_url",
-    aspectRatios: ["16:9", "9:16", "1:1", "4:3", "3:4"],
     durations: [5, 10],
     resolutions: ["480p", "720p", "1080p"],
     description: "Animate a starting image into a cinematic clip.",
@@ -139,7 +143,6 @@ export const i2vModels: VideoModel[] = [
     provider: "Kuaishou",
     mode: "i2v",
     imageField: "image_url",
-    aspectRatios: ["16:9", "9:16", "1:1"],
     durations: [5, 10],
     description: "Faster Kling image-to-video tier.",
   },
@@ -148,7 +151,7 @@ export const i2vModels: VideoModel[] = [
     name: "Veo 3 Fast",
     provider: "Google",
     mode: "i2v",
-    imageField: "image_url",
+    imageField: "images_list",
     aspectRatios: ["16:9", "9:16"],
     description: "Google Veo 3 (fast) from a starting frame, with native audio.",
   },
@@ -158,9 +161,9 @@ export const i2vModels: VideoModel[] = [
     provider: "MiniMax",
     mode: "i2v",
     imageField: "image_url",
-    aspectRatios: ["16:9", "9:16"],
-    durations: [6, 10],
-    description: "MiniMax Hailuo 02 image-to-video.",
+    durations: [6],
+    resolutions: ["1080p"],
+    description: "MiniMax Hailuo 02 image-to-video (6s · 1080p).",
   },
   {
     id: "seedance-lite-i2v",
@@ -168,7 +171,6 @@ export const i2vModels: VideoModel[] = [
     provider: "ByteDance",
     mode: "i2v",
     imageField: "image_url",
-    aspectRatios: ["16:9", "9:16", "1:1", "4:3", "3:4"],
     durations: [5, 10],
     resolutions: ["480p", "720p", "1080p"],
     description: "Cheaper, faster Seedance image-to-video.",
@@ -179,8 +181,8 @@ export const i2vModels: VideoModel[] = [
     provider: "Alibaba",
     mode: "i2v",
     imageField: "image_url",
-    aspectRatios: ["16:9", "9:16", "1:1"],
-    durations: [5],
+    aspectRatios: ["16:9", "9:16"],
+    durations: [5, 8],
     resolutions: ["480p", "720p"],
     description: "Alibaba Wan 2.2 image-to-video.",
   },
@@ -189,9 +191,10 @@ export const i2vModels: VideoModel[] = [
     name: "PixVerse V5",
     provider: "PixVerse",
     mode: "i2v",
-    imageField: "image_url",
-    aspectRatios: ["16:9", "9:16", "1:1"],
+    imageField: "images_list",
+    aspectRatios: ["16:9", "9:16", "1:1", "4:3", "3:4"],
     durations: [5, 8],
+    resolutions: ["360p", "540p", "720p", "1080p"],
     description: "Stylized image-to-video for social formats.",
   },
   {
@@ -200,8 +203,9 @@ export const i2vModels: VideoModel[] = [
     provider: "Runway",
     mode: "i2v",
     imageField: "image_url",
-    aspectRatios: ["16:9", "9:16"],
-    durations: [5, 10],
+    aspectRatios: ["16:9", "9:16", "1:1", "4:3", "3:4"],
+    durations: [5, 8],
+    resolutions: ["720p", "1080p"],
     description: "Runway Gen-3 Alpha image-to-video.",
   },
 ];
@@ -217,6 +221,22 @@ export const videoModels: VideoModel[] = [...t2vModels, ...i2vModels];
  * voice id produced by the Voice Cloning model below.
  */
 const minimaxVoices: SelectOption[] = [
+  // ── Español (audiencia hispana primero) ──────────────────────────────────
+  { value: "Spanish_Narrator", label: "Español · Narrador" },
+  { value: "Spanish_SereneWoman", label: "Español · Mujer serena" },
+  { value: "Spanish_ConfidentWoman", label: "Español · Mujer segura" },
+  { value: "Spanish_ThoughtfulMan", label: "Español · Hombre reflexivo" },
+  { value: "Spanish_RationalMan", label: "Español · Hombre racional" },
+  { value: "Spanish_CaptivatingStoryteller", label: "Español · Narrador cautivador" },
+  { value: "Spanish_ElegantGirl", label: "Español · Chica elegante" },
+  { value: "Spanish_Kind-heartedGirl", label: "Español · Chica amable" },
+  { value: "Spanish_MaturePartner", label: "Español · Voz madura" },
+  { value: "Spanish_SophisticatedLady", label: "Español · Dama sofisticada" },
+  { value: "Spanish_WiseScholar", label: "Español · Erudito" },
+  { value: "Spanish_DeterminedManager", label: "Español · Directivo decidido" },
+  { value: "Spanish_FriendlyNeighbor", label: "Español · Vecino cercano" },
+  { value: "Spanish_FunnyGuy", label: "Español · Chico gracioso" },
+  // ── Multilingües / inglés ────────────────────────────────────────────────
   { value: "Wise_Woman", label: "Wise Woman" },
   { value: "Friendly_Person", label: "Friendly Person" },
   { value: "Inspirational_girl", label: "Inspirational Girl" },

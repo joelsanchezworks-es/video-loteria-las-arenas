@@ -21,14 +21,16 @@ export interface VideoModel {
   name: string;
   provider: string;
   mode: VideoMode;
-  /** Supported aspect ratios (first item is the default). */
-  aspectRatios: string[];
+  /** Supported aspect ratios (first item is the default). Omit when the model
+   *  has no aspect_ratio param (e.g. many i2v models take it from the image). */
+  aspectRatios?: string[];
   /** Supported durations in seconds; omit if the model has a fixed length. */
   durations?: number[];
   /** Supported output resolutions; omit if not configurable. */
   resolutions?: string[];
-  /** Field name MuAPI expects for the input image (i2v only). */
-  imageField?: string;
+  /** Field MuAPI expects for the input image (i2v only): a single URL string
+   *  ("image_url") or a one-element array ("images_list"). */
+  imageField?: "image_url" | "images_list";
   description?: string;
 }
 

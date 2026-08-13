@@ -31,7 +31,7 @@ export function VideoPanel({
   const [mode, setMode] = useState<VideoMode>("t2v");
   const [model, setModel] = useState(DEFAULT_MODEL.id);
   const [prompt, setPrompt] = useState("");
-  const [aspectRatio, setAspectRatio] = useState(DEFAULT_MODEL.aspectRatios[0]);
+  const [aspectRatio, setAspectRatio] = useState<string | null>(DEFAULT_MODEL.aspectRatios?.[0] ?? null);
   const [duration, setDuration] = useState<number | null>(DEFAULT_MODEL.durations?.[0] ?? null);
   const [resolution, setResolution] = useState<string | null>(DEFAULT_MODEL.resolutions?.[0] ?? null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export function VideoPanel({
   useEffect(() => {
     const info = getVideoModelById(model);
     if (!info) return;
-    setAspectRatio(info.aspectRatios[0]);
+    setAspectRatio(info.aspectRatios?.[0] ?? null);
     setDuration(info.durations?.[0] ?? null);
     setResolution(info.resolutions?.[0] ?? null);
   }, [model]);
@@ -77,7 +77,7 @@ export function VideoPanel({
       generateVideo(apiKey, {
         model,
         prompt: prompt.trim() || undefined,
-        aspect_ratio: aspectRatio,
+        aspect_ratio: aspectRatio ?? undefined,
         duration: duration ?? undefined,
         resolution: resolution ?? undefined,
         image_url: mode === "i2v" ? imageUrl ?? undefined : undefined,
@@ -86,7 +86,8 @@ export function VideoPanel({
     );
 
     if (res?.url) {
-      setResults((prev) => [{ url: res.url as string, caption: `${modelInfo.name} · ${aspectRatio}` }, ...prev]);
+      const caption = aspectRatio ? `${modelInfo.name} · ${aspectRatio}` : modelInfo.name;
+      setResults((prev) => [{ url: res.url as string, caption }, ...prev]);
       onVideoGenerated(res.url);
       onRefreshBalance();
     } else if (res && !res.url) {
@@ -141,7 +142,9 @@ export function VideoPanel({
             rows={4}
           />
 
-          <AspectRatioSelector options={modelInfo.aspectRatios} value={aspectRatio} onChange={setAspectRatio} />
+          {modelInfo.aspectRatios && aspectRatio && (
+            <AspectRatioSelector options={modelInfo.aspectRatios} value={aspectRatio} onChange={setAspectRatio} />
+          )}
 
           {modelInfo.durations && duration !== null && (
             <DurationSelector options={modelInfo.durations} value={duration} onChange={setDuration} />

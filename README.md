@@ -180,18 +180,18 @@ lib/utils.ts                 · helpers (cn, formatUsd, downloadUrl)
 La integración usa endpoints y slugs reales del proyecto de referencia, pero
 conviene validarlos con tu propia key de Producción:
 
-- **Catálogo de voces del TTS**: se incluye una selección curada de voces del
-  sistema de MiniMax. La lista completa (100+ voces, multi-idioma) está en
-  `muapi.ai/playground/minimax-voice-clone`. Amplía `minimaxVoices` en
-  `lib/muapi/models.ts` si quieres más (por ejemplo voces en español).
+- **Voces del TTS**: ya incluye **voces en español** (`Spanish_*`) además de
+  multilingües/inglés. La lista completa (100+ voces) está en
+  `muapi.ai/playground/minimax-voice-clone`; amplía `minimaxVoices` en
+  `lib/muapi/models.ts` si quieres más.
 - **Otros modelos de TTS** (ElevenLabs, Gemini): añadidos como comentario en
   `lib/muapi/models.ts`; confirma los nombres exactos de sus campos de entrada
   antes de exponerlos en la UI.
-- **Enums por modelo** (aspecto/duración/resolución): son un subconjunto seguro;
-  cada modelo de MuAPI puede admitir más o menos opciones. Si un valor no está
-  soportado, MuAPI responde con un error visible en la UI.
-- **Modelos de vídeo**: se expone una selección curada; puedes añadir cualquiera
-  de los 100+ slugs de MuAPI en `t2vModels` / `i2vModels`.
+- **Enums por modelo** (aspecto/duración/resolución): extraídos de los esquemas
+  reales de cada modelo, así que la UI solo ofrece valores válidos. Al añadir
+  modelos nuevos, replica sus enums reales igual.
+- **Modelos de vídeo**: se expone una selección curada y precisa; puedes añadir
+  cualquiera de los 100+ slugs de MuAPI en `t2vModels` / `i2vModels`.
 
 ---
 
